@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+
+    <div id="tags"></div>
+
+    <form>
+        <input id="searchBox" type="text" placeholder="Type here..">
+        <button id="searchButton" type="submit">Search</button>
+    </form>
+
+    <div id="gifs"></div>
+
+
+
+
+
+    <script>
+
+        // giphy api key: 2LCTuNIUFHaKuSTZw4Uufixfw9PPjd7R
+
+
+        $(document).ready(function () {
+
+            let topics = ["Travis Rice", "John Jackson", "Nicolas Muller"]
+
+
+
+//display array as buttons
+            function displayTopics() {
+                for (let i = 0; i < topics.length; i++) {
+                    var btn = $("<button type=button class=btn btn-info>" + topics[i] + "</button>")
+                    $("#tags").append(btn)
+
+
+                }
+            }
+            displayTopics();
+
+
+
+
+//button adder
+            $("#searchButton").on("click", function(event){
+                event.preventDefault();
+                topics.append("<button>").text(searchBox.val());
+
+                displayTopics();
+            })
+
+
+
+
+
+
+
+//display gifs 
+            $("button").on("click", function () {
+                let search = this.innerText.trim();
+                let refinedSearch = search.replace(' ', '+')
+                let queryURL = "http://api.giphy.com/v1/gifs/search?q=" + refinedSearch + "&api_key=2LCTuNIUFHaKuSTZw4Uufixfw9PPjd7R&limit=5";
+
+                $.ajax({
+                    url: queryURL,
+                    method: "GET"
+                })
+                    .then(function (response) {
+                        let results = response.data;
+                        
+                        
+                        for (let i=0; i<results.length; i++){
+                        console.log(results)
+
+
+
+
+                            let gifDiv = $("#gifs"); //rename gif spot
+
+
+                            let newGif = $("<div>");
+                            let gif = $("<img></img>").attr("src", results[i].url); // create gif as variable
+                            
+
+                            let rating = results[i].rating; //get gif rating
+                            let ratingBox = $("<div></div"); //make spot to put rating
+                            ratingBox.text("Rating: "+rating) // combine
+                            
+                            newGif.append(ratingBox)
+                            newGif.append(gif);
+
+                            gifDiv.append(newGif);
+                            
+                            
+
+
+                        }
+
+
+                    })
+
+            })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        })
+    </script>
+</body>
+
+</html>
