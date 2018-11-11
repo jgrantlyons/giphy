@@ -27,15 +27,13 @@
 
         // giphy api key: 2LCTuNIUFHaKuSTZw4Uufixfw9PPjd7R
 
-
         $(document).ready(function () {
 
-            let topics = ["Travis Rice", "John Jackson", "Nicolas Muller"]
+            let topics = ["Travis Rice", "John Jackson", "candide thovex"]
 
-
-
-//display array as buttons
+            //display array as buttons
             function displayTopics() {
+                $("#tags").empty();
                 for (let i = 0; i < topics.length; i++) {
                     var btn = $("<button type=button class=btn btn-info>" + topics[i] + "</button>")
                     $("#tags").append(btn)
@@ -45,76 +43,73 @@
             }
             displayTopics();
 
-
-
-
-//button adder
-            $("#searchButton").on("click", function(event){
+            //button adder
+            $("#searchButton").on("click", function (event) {
                 event.preventDefault();
-                topics.append("<button>").text(searchBox.val());
+                let userInput = $("#searchBox").val().trim();
+                topics.push(userInput)
 
                 displayTopics();
             })
 
-
-
-
-
-
-
-//display gifs 
-            $("button").on("click", function () {
+            //display gifs 
+            $(".btn").on("click", function () {
+                $("#gifs").empty();
                 let search = this.innerText.trim();
                 let refinedSearch = search.replace(' ', '+')
-                let queryURL = "http://api.giphy.com/v1/gifs/search?q=" + refinedSearch + "&api_key=2LCTuNIUFHaKuSTZw4Uufixfw9PPjd7R&limit=5";
+                let queryURL = "http://api.giphy.com/v1/gifs/search?q=" + refinedSearch + "&api_key=2LCTuNIUFHaKuSTZw4Uufixfw9PPjd7R&limit=15";
 
                 $.ajax({
                     url: queryURL,
                     method: "GET"
                 })
                     .then(function (response) {
+                        console.log(response.data)
                         let results = response.data;
-                        
-                        
-                        for (let i=0; i<results.length; i++){
-                        console.log(results)
 
 
-
-
+                        for (let i = 0; i < results.length; i++) {
+                            console.log(results)
                             let gifDiv = $("#gifs"); //rename gif spot
-
-
                             let newGif = $("<div>");
-                            let gif = $("<img></img>").attr("src", results[i].url); // create gif as variable
-                            
+                            // let gif = $("<img></img>").attr("src", results[i].images.fixed_height_still.url); // create gif as variable
 
+                            let gif = $("<img>");
+                            gif.attr({
+                                class: "img-fluid img-thumbnail shadow rounded gif",
+                                src: results[i].images.fixed_height_still.url,
+                                still: results[i].images.fixed_height_still.url,
+                                animated: results[i].images.fixed_height.url,
+                                state: "still",
+                            })
                             let rating = results[i].rating; //get gif rating
                             let ratingBox = $("<div></div"); //make spot to put rating
-                            ratingBox.text("Rating: "+rating) // combine
-                            
-                            newGif.append(ratingBox)
-                            newGif.append(gif);
+                            ratingBox.text("Rating: " + rating) // combine
 
-                            gifDiv.append(newGif);
-                            
-                            
+                            newGif.append(ratingBox)
+                            newGif.prepend(gif);
+
+                            gifDiv.prepend(newGif);
+
 
 
                         }
-
 
                     })
 
             })
 
+            $(".gif").on("click", function (e) {
+                e.preventDefault();
 
-
-
-
-
-
-
+                if ($(this).attr("state") === "still") {
+                    $(this).attr("src", $(this).attr("animate"))
+                    $(this).attr("state", "animate")
+                } else {
+                    $(this).attr("src", $(this).attr("still"))
+                    $(this).attr("state", "still")
+                }
+            });
 
 
 
@@ -122,7 +117,9 @@
 
 
         })
+
     </script>
+
 </body>
 
 </html>
