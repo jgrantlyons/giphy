@@ -53,7 +53,7 @@
             })
 
             //display gifs 
-            $(".btn").on("click", function () {
+            $(document).on("click", ".btn", function () {
                 $("#gifs").empty();
                 let search = this.innerText.trim();
                 let refinedSearch = search.replace(' ', '+')
@@ -78,9 +78,9 @@
                             gif.attr({
                                 class: "img-fluid img-thumbnail shadow rounded gif",
                                 src: results[i].images.fixed_height_still.url,
-                                still: results[i].images.fixed_height_still.url,
-                                animated: results[i].images.fixed_height.url,
-                                state: "still",
+                                "data-still": results[i].images.fixed_height_still.url,
+                                "data-animated": results[i].images.fixed_height.url,
+                                "data-state": "still",
                             })
                             let rating = results[i].rating; //get gif rating
                             let ratingBox = $("<div></div"); //make spot to put rating
@@ -99,15 +99,18 @@
 
             })
 
-            $(".gif").on("click", function (e) {
+            $(document).on("click", ".gif", function (e) {
                 e.preventDefault();
+                let state = $(this).attr("data-state");
+                console.log(state)
+                
+                if (state === "still") {
+                    $(this).attr("src", $(this).attr("data-animated"))
+                    $(this).attr("data-state", "animate")
 
-                if ($(this).attr("state") === "still") {
-                    $(this).attr("src", $(this).attr("animate"))
-                    $(this).attr("state", "animate")
                 } else {
-                    $(this).attr("src", $(this).attr("still"))
-                    $(this).attr("state", "still")
+                    $(this).attr("src", $(this).attr("data-still"))
+                    $(this).attr(state, "still")
                 }
             });
 
